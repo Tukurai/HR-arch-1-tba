@@ -9,23 +9,21 @@ sel = selectors.DefaultSelector()
 messages = [b"Message 1 from client.", b"Message 2 from client."]
 
 
-def start_connections(host, port, num_conns):
+def start_connection(host, port):
     server_addr = (host, port)
-    for i in range(0, num_conns):
-        connid = i + 1
-        print(f"Starting connection {connid} to {server_addr}")
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setblocking(False)
-        sock.connect_ex(server_addr)
-        events = selectors.EVENT_READ | selectors.EVENT_WRITE
-        data = types.SimpleNamespace(
-            connid=connid,
-            msg_total=sum(len(m) for m in messages),
-            recv_total=0,
-            messages=messages.copy(),
-            outb=b"",
-        )
-        sel.register(sock, events, data=data)
+    print(f"Starting connection to {server_addr}")
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setblocking(False)
+    sock.connect_ex(server_addr)
+    events = selectors.EVENT_READ | selectors.EVENT_WRITE
+    data = types.SimpleNamespace(
+        conn_name=socket.gethostname(),
+        msg_total=sum(len(m) for m in messages),
+        recv_total=0,
+        messages=messages.copy(),
+        outb=b"",
+    )
+    sel.register(sock, events, data=data)
 
 
 def service_connection(key, mask):
@@ -34,27 +32,27 @@ def service_connection(key, mask):
     if mask & selectors.EVENT_READ:
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
-            print(f"Received {recv_data!r} from connection {data.connid}")
+            print(f"Received {recv_data!r} from connection {data.conn_name}")
             data.recv_total += len(recv_data)
         if not recv_data or data.recv_total == data.msg_total:
-            print(f"Closing connection {data.connid}")
+            print(f"Closing connection {data.conn_name}")
             sel.unregister(sock)
             sock.close()
     if mask & selectors.EVENT_WRITE:
         if not data.outb and data.messages:
             data.outb = data.messages.pop(0)
         if data.outb:
-            print(f"Sending {data.outb!r} to connection {data.connid}")
+            print(f"Sending {data.outb!r} to connection {data.conn_name}")
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]
 
 
-if len(sys.argv) != 4:
-    print(f"Usage: {sys.argv[0]} <host> <port> <num_connections>")
+if len(sys.argv) != 3:
+    print(f"Usage: {sys.argv[0]} <host> <port>")
     sys.exit(1)
 
-host, port, num_conns = sys.argv[1:4]
-start_connections(host, int(port), int(num_conns))
+host, port = sys.argv[1:3]
+start_connection(host, int(port))
 
 try:
     while True:
