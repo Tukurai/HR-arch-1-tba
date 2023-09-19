@@ -1,31 +1,58 @@
 # HR-arch-1-tba
 A text based adventure in Python, for our Basecamp Arch 1 Challenge.
 
-COURSE DESCRIPTION 
+---
 
-Course name: Basecamp 1, Challenge 1 
+Running the Client and Server
+They both use command-line arguments. You can run them without arguments to see the options.
 
-Course code: INFBCC01-1 
+For the server, pass host and port numbers:
 
-ECTS: 1 ECTS 
+$ python tba-server.py
+Usage: tba-server.py <host> <port>
+For the client, also pass the number of connections to create to the server, num_connections:
 
-Study points and workload: This elective provides you with 1 study point (EC). The study workload is at least 28 hours during Challenge Week.   
+$ python tba-client.py
+Usage: tba-client.py <host> <port> <num_connections>
+Below is the server output when listening on the loopback interface on port 65432:
 
-Prior knowledge: The challenge is a logical continuation of the program in Basecamp. The level of the challenge is aligned to Basecamp's program of Arch 1.  
+$ python tba-server.py 127.0.0.1 65432
+Listening on ('127.0.0.1', 65432)
+Accepted connection from ('127.0.0.1', 61354)
+Accepted connection from ('127.0.0.1', 61355)
+Echoing b'Message 1 from client.Message 2 from client.' to ('127.0.0.1', 61354)
+Echoing b'Message 1 from client.Message 2 from client.' to ('127.0.0.1', 61355)
+Closing connection to ('127.0.0.1', 61354)
+Closing connection to ('127.0.0.1', 61355)
+Below is the client output when it creates two connections to the server above:
 
-Working method: Students work during Challenge Week in a team of 2 (or 3) students. Students work independently on location and online. Teachers and peer coaches will be available for support. 
+$ python tba-client.py 127.0.0.1 65432 2
+Starting connection 1 to ('127.0.0.1', 65432)
+Starting connection 2 to ('127.0.0.1', 65432)
+Sending b'Message 1 from client.' to connection 1
+Sending b'Message 2 from client.' to connection 1
+Sending b'Message 1 from client.' to connection 2
+Sending b'Message 2 from client.' to connection 2
+Received b'Message 1 from client.Message 2 from client.' from connection 1
+Closing connection 1
+Received b'Message 1 from client.Message 2 from client.' from connection 2
+Closing connection 2
 
-Testing: A working adventure game that meets the minimal requirements and is presented in class. A minimum effort of 28 hours per person is expected. Students keep a logbook for this purpose. 
+---
 
-Learning materials: All Basecamp material, online content. 
-
-Content: Students will create a text-based adventure board game in Python, covering at least the concepts in Arch 1. 
-
-Notes: Although there are minimum requirements, creativity is stimulated! 
-
-Course coordinator: Xenia Hasker, John Grobben 
-
-Date: 1 September 2023 
+**COURSE DESCRIPTION** 
+**Course name**: Basecamp 1, Challenge 1 
+**Course code**: INFBCC01-1 
+**ECTS**: 1 ECTS 
+**Study points and workload**: _This elective provides you with 1 study point (EC). The study workload is at least 28 hours during Challenge Week._
+**Prior knowledge**: _The challenge is a logical continuation of the program in Basecamp. The level of the challenge is aligned to Basecamp's program of Arch 1._
+**Working method**: _Students work during Challenge Week in a team of 2 (or 3) students. Students work independently on location and online. Teachers and peer coaches will be available for support._ 
+**Testing**: _A working adventure game that meets the minimal requirements and is presented in class. A minimum effort of 28 hours per person is expected. Students keep a logbook for this purpose._ 
+**Learning materials**: _All Basecamp material, online content._ 
+**Content**: _Students will create a text-based adventure board game in Python, covering at least the concepts in Arch 1._ 
+**Notes**: _Although there are minimum requirements, creativity is stimulated!_ 
+**Course coordinator**: _Xenia Hasker, John Grobben_ 
+**Date**: _1 September 2023_ 
 
 ---
 
