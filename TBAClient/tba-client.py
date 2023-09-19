@@ -1,5 +1,4 @@
 # tba-client.py
-#!/usr/bin/env python3
 
 import sys
 import socket
