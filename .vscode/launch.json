@@ -8,19 +8,34 @@
             "name": "Server TBA",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TBAServer/tba-server.py",
+            "program": "${workspaceFolder}/TBAServer/tba_server.py",
             "args": ["127.0.0.1", "65535"],
             "console": "externalTerminal",
             "justMyCode": true
         },
         {
-            "name": "Client TBA",
+            "name": "Client TBA 1",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TBAClient/tba-client.py",
+            "program": "${workspaceFolder}/TBAClient/tba_client.py",
+            "args": ["127.0.0.1", "65535"],
+            "console": "externalTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Client TBA 2",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/TBAClient/tba_client.py",
             "args": ["127.0.0.1", "65535"],
             "console": "externalTerminal",
             "justMyCode": true
         }
-    ]
+    ],
+    "compounds": [  
+        {  
+            "name": "1 Server / 2 Clients",  
+            "configurations": ["Server TBA", "Client TBA 1", "Client TBA 2"]  
+        }  
+    ]  
 }
