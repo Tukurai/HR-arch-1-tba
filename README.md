@@ -3,6 +3,15 @@ A text based adventure in Python, for our Basecamp Arch 1 Challenge.
 
 ---
 
+Prerequisite:
+
+Run the following command in PowerShell or in a command prompt:
+pip install pymongo  
+
+This installs the plugins required to connect to the MongoDb datastore we use for saving and loading data.
+
+---
+
 Running the Client and Server
 They both use command-line arguments. You can run them without arguments to see the options.
 

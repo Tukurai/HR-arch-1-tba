@@ -43,7 +43,15 @@ def service_connection(key, mask):
     if mask & selectors.EVENT_READ:  
         recv_data = sock.recv(1024)  # Should be ready to read  
         if recv_data:  
-            print(f"Received {recv_data!r} from connection {data.connection_name}")  
+            # print(f"DEBUG: Received {recv_data!r} from connection {data.connection_name}")  
+
+            message_data = recv_data.decode().split('|')
+            if len(message_data) > 1: # message has a command type.
+                match message_data[0]:
+                    case 'INPUT':
+                        data.outgoing_bytes = input(f"{message_data[1]}").encode()  
+            else:
+                print(f"{recv_data!r}")  
             data.received_total += len(recv_data)  
   
         # If no data received or all data sent has been received  
@@ -53,7 +61,7 @@ def service_connection(key, mask):
   
             # If user wants to quit, close the connection  
             if data.outgoing_bytes.decode() == 'quit':  
-                print(f"Closing connection {data.connection_name}")  
+                print(f"Closing connection...")  
                 selector.unregister(sock)  
                 sock.close() 
                 return
@@ -65,8 +73,7 @@ def service_connection(key, mask):
   
     # If there is data to write  
     if mask & selectors.EVENT_WRITE:  
-        if data.outgoing_bytes:  
-            print(f"Sending {data.outgoing_bytes!r} to connection {data.connection_name}")  
+        if data.outgoing_bytes:
             sent = sock.send(data.outgoing_bytes)  # Should be ready to write  
             data.outgoing_bytes = data.outgoing_bytes[sent:]  
   
@@ -76,7 +83,7 @@ if len(sys.argv) != 3:
     sys.exit(1)  
   
 host, port = sys.argv[1:3]  
-message = input("Enter message to send to server: ").encode()  
+message = "CONNECT".encode()  
   
 # Start a connection with the initial message  
 start_connection(host, int(port), message)  
