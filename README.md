@@ -5,8 +5,11 @@ A text based adventure in Python, for our Basecamp Arch 1 Challenge.
 
 Prerequisite:
 
-Run the following command in PowerShell or in a command prompt:
-pip install pymongo  
+
+- Install MongoDB locally, with default settings: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-7.0.1-signed.msi
+- Create a database called `text-based-adventure`, with a collection called `players`.
+- Run the following command in PowerShell or in a command prompt: `pip install pymongo`
+- Edit data_client.py to use `127.0.0.1` as host, leave the rest unchanged.
 
 This installs the plugins required to connect to the MongoDb datastore we use for saving and loading data.
 
