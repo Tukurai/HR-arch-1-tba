@@ -60,8 +60,9 @@ def process_input(player, inp, items, directions):
     # Possible commands that correspond to actions
     move_words = ["MOVE", "GO", "WALK"]
     pick_up_words = ["PICK UP", "GRAB", "TAKE"]
-    look_around_words = ["LOOK AROUND", "CHECK"]
+    look_around_words = ["LOOK AROUND"]
     use_words = ["USE"]
+    inventory_words = ["CHECK INVENTORY", "CHECK BAG", "LOOK IN BAG"]
 
     # Move player
     for word in move_words:
@@ -117,7 +118,15 @@ def process_input(player, inp, items, directions):
                         case 0:
                             print(f"{item.name} can't be used here")
                         case -1:
-                            print(f"You don't have {item.name}")        
+                            print(f"You don't have {item.name}")
+    
+    # Check inventory
+    for word in inventory_words:
+        if word in inp.upper():
+            print("Inventory:")
+            for item in check_inventory(player):
+                print(item.name)
+            
 
 
 def move(player, direction):
@@ -188,11 +197,24 @@ def use(player, item):
         return -1
 
 
+def check_inventory(player):
+    """
+    Lets the player check the inventory.
+    Returns an iterable.
+    """
+    for item in player.inventory:
+        yield item
+
+
 class Player:
     def __init__(self, name, room, inventory):
         self.name = name
         self.room = room
         self.inventory = inventory
+
+
+    def __str__(self):
+        return "Player Object"
     
 
     def destroy_item(self, item):
@@ -211,6 +233,10 @@ class Room:
         self.items = items
         self.is_locked = is_locked
         self.key = key
+
+
+    def __str__(self):
+        return f"<Room: id={self.id}>"
 
 
     def get_path(self, direction):
@@ -256,11 +282,20 @@ class Item:
         self.alias = alias
 
 
+    def __str__(self):
+        return f"<Item: id={self.id}>"
+
+
 class Direction:
     def __init__(self, direction_nesw, direction_frdl):
         "Initialise direction with a NORTH EAST SOUTH WEST part that corresponds with FORWARD RIGHT DOWN LEFT"
         self.nesw = direction_nesw
         self.frdl = direction_frdl
+
+
+    def __str__(self):
+        return "a direction object"
+
     
     def get_list(self):
         "Return the components as a list"
