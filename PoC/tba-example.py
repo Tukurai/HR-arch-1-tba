@@ -11,12 +11,13 @@ def main():
     items.append(Item(0, "Cargobay Key", "Key"))
     items.append(Item(1, "Spacelaser", "Weapon"))
 
+    # id, name, path_north=None, path_east=None, path_south=None, path_west = None, items=[], is_locked=False, key=None
     # Init rooms
-    start = Room(0, "Start", None, None, None, None, None, False, None)
-    spaceship_entry = Room(1, "Spaceship Entry", None, None, None, None, None, False, None)
-    spaceship_hallway = Room(2, "Spaceship Hallway", None, None, None, None, None, False, None)
-    spaceship_cargobay = Room(3, "Spaceship Cargobay", None, None, None, None, [items[1]], True, items[0])
-    spaceship_cockpit = Room(4, "Spaceship Cockpit", None, None, None, None, [items[0]], False, None)
+    start = Room(0, "Start")
+    spaceship_entry = Room(1, "Spaceship Entry")
+    spaceship_hallway = Room(2, "Spaceship Hallway")
+    spaceship_cargobay = Room(3, "Spaceship Cargobay", items=[items[1]], is_locked=True, key=items[0])
+    spaceship_cockpit = Room(4, "Spaceship Cockpit", items=[items[0]])
 
     start.add_description("The floor is made of some kind of sand and you are surrounded by rocks. It doesn't look familiar to you. You see a spaceship ahead")
     spaceship_entry.add_description("The door creaks as it opens. You walk inside the damaged spaceship")
@@ -199,7 +200,7 @@ class Player:
             self.inventory.remove(item)
 
 class Room:
-    def __init__(self, id, name, path_north, path_east, path_south, path_west, items, is_locked, key):
+    def __init__(self, id, name, path_north=None, path_east=None, path_south=None, path_west = None, items=[], is_locked=False, key=None):
         self.id = id
         self.name = name
         self.description = ""
@@ -210,25 +211,6 @@ class Room:
         self.items = items
         self.is_locked = is_locked
         self.key = key
-
-
-    def get_paths(self):
-        return [self.path_north, self.path_east, self.path_south, self.path_west]
-
-
-    def add_description(self, description):
-        self.description = description
-
-
-    def destroy_item(self, item):
-        "Destroy item in room(ex. when item is picked up)"
-        if len(self.items) != 0:
-            self.items.remove(item)
-
-
-    def add_item(self, item):
-        "Adds item to the room list"
-        self.items.append(item)
 
 
     def get_path(self, direction):
@@ -242,7 +224,27 @@ class Room:
                 return self.path_south
             case "WEST":
                 return self.path_west
-    
+
+
+    def get_paths(self):
+        return [self.path_north, self.path_east, self.path_south, self.path_west]
+
+
+    def add_description(self, description):
+        self.description = description
+
+
+    def add_item(self, item):
+        "Adds item to the room list"
+        self.items.append(item)
+
+
+    def destroy_item(self, item):
+        "Destroy item in room(ex. when item is picked up)"
+        if len(self.items) != 0:
+            self.items.remove(item)
+
+
     def unlock(self):
         self.is_locked = False
 
@@ -252,6 +254,7 @@ class Item:
         self.id = id
         self.name = name
         self.alias = alias
+
 
 class Direction:
     def __init__(self, direction_nesw, direction_frdl):
