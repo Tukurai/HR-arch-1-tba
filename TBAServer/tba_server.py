@@ -81,9 +81,10 @@ def service_connection(key, mask):
 
                 player_data.player.password = received_data.decode()  
                 
-                mongo_player = Player.from_dict(database.load_single("players", {'name': player_data.player.name}))
+                mongo_player = database.load_single("players", {'name': player_data.player.name})
 
                 if mongo_player is not None:
+                    mongo_player = Player.from_dict(mongo_player)
                     if mongo_player.password == player_data.player.password:
                         data.outgoing_bytes += b"INPUT|Welcome to TBA"
                     else:
