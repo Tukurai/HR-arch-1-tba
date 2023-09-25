@@ -5,8 +5,7 @@ class Room:
         self.items = items if items is not None else []
 
     def add_item(self, item):
-        if self._id is not None:
-            self.items.append(item)
+        self.items.append(item)
 
     # This method converts the Room instance to a dictionary.
     def to_dict(self):
