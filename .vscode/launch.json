@@ -5,10 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Game",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/game.py",
+            "args": [],
+            "console": "externalTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Server TBA",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TBAServer/tba_server.py",
+            "program": "${workspaceFolder}/PoC/Multiplayer/TBAServer/tba_server.py",
             "args": ["127.0.0.1", "65535"],
             "console": "externalTerminal",
             "justMyCode": true
@@ -17,7 +26,7 @@
             "name": "Client TBA 1",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TBAClient/tba_client.py",
+            "program": "${workspaceFolder}/PoC/Multiplayer/TBAClient/tba_client.py",
             "args": ["127.0.0.1", "65535"],
             "console": "externalTerminal",
             "justMyCode": true
@@ -26,7 +35,7 @@
             "name": "Client TBA 2",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TBAClient/tba_client.py",
+            "program": "${workspaceFolder}/PoC/Multiplayer/TBAClient/tba_client.py",
             "args": ["127.0.0.1", "65535"],
             "console": "externalTerminal",
             "justMyCode": true
