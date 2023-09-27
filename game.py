@@ -1,18 +1,39 @@
 import json
 import os
 
+from saveloadhandler import SaveLoadHandler
+from inputhandler import InputHandler
+from roomhelper import RoomHelper
+from map import Map
+
 
 def main():
     object_dict = start_game()
 
     if object_dict is not None:
-        gameobjects = GamesaveState.loadstate(object_dict)
+        gameobjects = GamesaveState.load_state(object_dict)
     else:
         gameobjects = GameobjectData.init_gameobject_data()
 
+    # Create a new map and add rooms
+    game_map = Map(5, 5)
+    game_map.add_room(Room(id=0, name="Starting room"), 0, 0)
+    game_map.add_room(Room(id=1, name="Second room"), 1, 0)
+
+    # Set the player's current room
+    for row in game_map.rooms:  
+        for room in row:  
+            if room is not None and room.id == 0:  # Assuming id=0 is the starting room  
+                gameobjects['Player'].current_room = room  
+                break  
+
+
     # Saves the game in its current state
-    if input("Would you like to save the game? (y/n): ") == "y":
-        GamesaveState.savestate(gameobjects)
+    if (
+        InputHandler.user_input("Would you like to save the game? (y/n): ", ["y", "n"])
+        == "y"
+    ):
+        SaveLoadHandler.save_state(gameobjects)
 
 
 def start_game():
@@ -24,7 +45,10 @@ def start_game():
         pass
 
     if (
-        input("Would you like to load a previous game or start a new one? (load/new): ")
+        InputHandler.user_input(
+            "Would you like to load a previous game or start a new one? (load/new): ",
+            ["load", "new"],
+        )
         == "load"
     ):
         savefile_list = []
@@ -36,17 +60,15 @@ def start_game():
 
         if len(savefile_list) != 0:
             while True:
-                user_load = input(
-                    "Which save file would you like to load? (please enter file name with .json extension): "
+                user_load = InputHandler.user_input(
+                    "Which save file would you like to load? (please enter file name with .json extension): ",
+                    savefile_list,
                 )
                 if user_load in savefile_list:
                     if not os.getcwd().endswith("saves"):
                         os.chdir("saves")
 
-                    with open(user_load, "r") as json_file:
-                        return json.load(json_file)
-                else:
-                    print("File not found. Please enter a valid file name.")
+                    return SaveLoadHandler.load_state(user_load)
         else:
             print("No save files found.")
     return None
