@@ -1,7 +1,7 @@
 import os
 
 from handlers import SaveLoadHandler, InputHandler
-from helpers import MapHelper
+from helpers import MapHelper, GameobjectHelper
 from classes import GameobjectData, GamesaveState, Map, Room
 
 
@@ -35,9 +35,16 @@ def main():
     game_map.add_room(
         Room(id=3, name="Crew Quarters", description="Where the crew sleeps."), 3, 0
     )
+
+    interactable = GameobjectHelper.get_gameobject_by_name(
+        gameobjects["Interactable"], "Desk"
+    )
     game_map.add_room(
         Room(
-            id=4, name="Medical Bay", description="A clean room with medical equipment."
+            id=4,
+            name="Medical Bay",
+            description="A clean room with medical equipment.",
+            interactables=[interactable],
         ),
         4,
         0,
@@ -136,7 +143,7 @@ def main():
             MapHelper.get_room_to_west_of,
             MapHelper.get_room_to_east_of,
         ]
-        available_actions = ["save", "load", "help"]
+        available_actions = ["look around", "check", "save", "load", "help"]
         direction_prompts = []
 
         for direction, method in zip(possible_directions, room_methods):
@@ -146,7 +153,7 @@ def main():
                 direction_prompts.append(f"go {direction}")
 
         direction_prompts_string = ", ".join(direction_prompts)
-        action_prompt = f"What would you like to do? ({direction_prompts_string}, save, load, help): "
+        action_prompt = f"What would you like to do? ({direction_prompts_string}, look around, check, save, load, help): "
 
         action = InputHandler.user_input(
             action_prompt,
@@ -186,6 +193,22 @@ def main():
                     gameobjects["Player"].current_room = new_room
                 else:
                     print("You cannot go east from here.")
+            case "check" | "look around":
+                current_room = gameobjects["Player"].current_room
+                interactable_name_list = [
+                    interactable.name
+                    for interactable in current_room.interactables
+                ]
+                if action == "look around":
+                    if len(interactable_name_list) == 0:
+                        interactable_name_list.append("nothing of interest")
+                    print(f"You look around the room and see a {' ,'.join(interactable_name_list)}")
+                if action == "check":
+                    inp =  input("What would you like to check?: ")
+                    if inp in interactable_name_list:
+                        ...
+                        # List stuff thats checkable here
+                        #GameobjectHelper.get_gameobject_by_name(inp)
             case "save":
                 SaveLoadHandler.save_state(gameobjects)
             case "load":
@@ -200,7 +223,9 @@ def main():
                     MapHelper.get_room_to_east_of,
                 ]
                 for direction, method in zip(possible_directions, room_methods):
-                    new_room = method(gameobjects["Player"].current_room, game_map.rooms)
+                    new_room = method(
+                        gameobjects["Player"].current_room, game_map.rooms
+                    )
                     if new_room is not None:
                         print(f"- go {direction}: move to the room to the {direction}")
                 print("- save: save to this save file")

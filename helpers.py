@@ -36,4 +36,19 @@ class MapHelper:
             for x in range(len(rooms[y])):  
                 if rooms[y][x] == room and x < len(rooms[y]) - 1:  
                     return rooms[y][x + 1]  
-        return None  
+        return None
+
+class GameobjectHelper:
+    @staticmethod
+    def get_gameobject_by_name(list, name):
+        for i in list:
+            if i.name == name:
+                return i
+        return None
+    
+    @staticmethod
+    def get_gameobject_by_id(list, id):
+        for i in list:
+            if i.id == id:
+                return i
+        return None

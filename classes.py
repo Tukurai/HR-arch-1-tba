@@ -8,9 +8,12 @@ class GamesaveState:
     def loadstate(cls, save_dict):
         gameobjects = {
             "Player": Player(**save_dict["Player"]),
+            "Enemy": [Enemy(**e) for e in save_dict["Enemy"]],
             "Item": [Item(**i) for i in save_dict["Item"]],
-            "Consumable": [Consumable(**c) for c in save_dict["Consumable"]],
             "Weapon": [Weapon(**w) for w in save_dict["Weapon"]],
+            "Consumable": [Consumable(**c) for c in save_dict["Consumable"]],
+            "Interactable": [Interactable(**i) for i in save_dict["Interactable"]],
+
         }
         return gameobjects
 
@@ -34,9 +37,11 @@ class GameobjectData:
 
         gameobjects = {
             "Player": Player(name=player_name),
+            "Enemy": GameobjectData.get_enemy_list(),
             "Item": GameobjectData.get_item_list(),
-            "Consumable": GameobjectData.get_consumable_list(),
             "Weapon": GameobjectData.get_weapon_list(),
+            "Consumable": GameobjectData.get_consumable_list(),
+            "Interactable": GameobjectData.get_interactable_list()
         }
 
         return gameobjects
@@ -59,6 +64,20 @@ class GameobjectData:
         weapon_list = [Weapon(id=0, name="Spaceknife", damage_multiplier=1)]
         return weapon_list
 
+    @classmethod
+    def get_enemy_list(cls):
+        enemy_list = [
+            Enemy(id=0, name="Spacerat", description="It's a rat, but in space!", hitpoints=1, item_drops=None)
+        ]
+        return enemy_list
+    
+    @classmethod
+    def get_interactable_list(cls):
+        interactable_list = [
+            Interactable(id=0, name="desk", description="For working")
+        ]
+        return interactable_list
+
 
 class Player:
     def __init__(self, name=None, hitpoints=10, inventory=None, weapons=None, current_room=None):
@@ -75,6 +94,15 @@ class Player:
 
     def inventory_add(self, item):
         self.inventory.append(item)
+
+
+class Enemy:
+    def __init__(self, id=None, name=None, description=None, hitpoints=1, item_drops=None):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.hitpoints = hitpoints
+        self.item_drops = item_drops
 
 
 class Item:
@@ -96,10 +124,35 @@ class Consumable(Item):
 
 
 class Room:
-    def __init__(self, id=None, name=None, description=None):
+    def __init__(self, id=None, name=None, description=None, interactables=None, items=None, enemies=None):
+        if interactables is None:
+            interactables = []
+        if items is None:
+            items = []
+        if enemies is None:
+            items = []
+
         self.id = id
         self.name = name
         self.description = description
+        self.interactables = interactables
+        self.items = items
+        self.enemies = enemies
+
+
+class Interactable:
+    def __init__(self, id=None, name=None, description=None, items=None, enemies=None):
+        if items is None:
+            items = []
+        if enemies is None:
+            enemies = []
+
+        self.id = id
+        self.name = name
+        self.description = description
+        self.items = items
+        self.enemies = enemies
+
         
 class Map:
     def __init__(self, width, height):
