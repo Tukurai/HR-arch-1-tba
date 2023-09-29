@@ -40,7 +40,9 @@ def main():
         direction_prompts = []
 
         for direction, method in zip(possible_directions, room_methods):
-            new_room = method(gameobjects["Player"].current_room, gameobjects["Map"].rooms)
+            new_room = method(
+                gameobjects["Player"].current_room, gameobjects["Map"].rooms
+            )
             if new_room is not None:
                 available_actions.insert(0, f"go {direction}")
                 direction_prompts.append(f"go {direction}")
