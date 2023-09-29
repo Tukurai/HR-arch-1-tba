@@ -1,4 +1,3 @@
-
 import json
 import os
 
@@ -8,10 +7,12 @@ class GamesaveState:
     def loadstate(cls, save_dict):
         gameobjects = {
             "Player": Player(**save_dict["Player"]),
-            "Item": [Item(**i) for i in save_dict["Item"]],
-            "Consumable": [Consumable(**c) for c in save_dict["Consumable"]],
-            "Weapon": [Weapon(**w) for w in save_dict["Weapon"]],
+            "Map": Map(**save_dict["Map"]),
         }
+
+        # for row in save_dict["Map"]["rooms"]:
+        #     for room in row ???????????????????????
+
         return gameobjects
 
     @classmethod
@@ -34,9 +35,12 @@ class GameobjectData:
 
         gameobjects = {
             "Player": Player(name=player_name),
+            "Enemy": GameobjectData.get_enemy_list(),
             "Item": GameobjectData.get_item_list(),
-            "Consumable": GameobjectData.get_consumable_list(),
             "Weapon": GameobjectData.get_weapon_list(),
+            "Consumable": GameobjectData.get_consumable_list(),
+            "Interactable": GameobjectData.get_interactable_list(),
+            "Map": GameobjectData.get_map(),
         }
 
         return gameobjects
@@ -59,9 +63,145 @@ class GameobjectData:
         weapon_list = [Weapon(id=0, name="Spaceknife", damage_multiplier=1)]
         return weapon_list
 
+    @classmethod
+    def get_enemy_list(cls):
+        enemy_list = [
+            Enemy(
+                id=0,
+                name="Spacerat",
+                description="It's a rat, but in space!",
+                hitpoints=1,
+                item_drops=None,
+            )
+        ]
+        return enemy_list
+
+    @classmethod
+    def get_interactable_list(cls):
+        interactable_list = [Interactable(id=0, name="desk", description="For working")]
+        return interactable_list
+
+    @classmethod
+    def get_map(cls):
+        game_map = Map(5, 5)
+        game_map.add_room(
+            Room(
+                id=0, name="Bridge", description="The control center of the spaceship."
+            ),
+            0,
+            0,
+        )
+        game_map.add_room(
+            Room(
+                id=1,
+                name="Engine Room",
+                description="A room filled with loud machinery.",
+            ),
+            1,
+            0,
+        )
+        game_map.add_room(
+            Room(
+                id=2, name="Cargo Hold", description="A large room for storing cargo."
+            ),
+            2,
+            0,
+        )
+        game_map.add_room(
+            Room(id=3, name="Crew Quarters", description="Where the crew sleeps."), 3, 0
+        )
+        game_map.add_room(
+            Room(
+                id=4,
+                name="Medical Bay",
+                description="A clean room with medical equipment.",
+            ),
+            4,
+            0,
+        )
+        game_map.add_room(
+            Room(id=5, name="Kitchen", description="A room with cooking equipment."),
+            0,
+            1,
+        )
+        game_map.add_room(
+            Room(
+                id=6,
+                name="Dining Room",
+                description="A room with tables and chairs for eating.",
+            ),
+            1,
+            1,
+        )
+        game_map.add_room(
+            Room(
+                id=7,
+                name="Bathroom",
+                description="A small room with a shower and toilet.",
+            ),
+            2,
+            1,
+        )
+        game_map.add_room(
+            Room(
+                id=8,
+                name="Storage Room",
+                description="A room filled with various supplies.",
+            ),
+            3,
+            1,
+        )
+        game_map.add_room(
+            Room(
+                id=9,
+                name="Airlock",
+                description="A room used for exiting and entering the spaceship.",
+            ),
+            4,
+            1,
+        )
+        game_map.add_room(
+            Room(
+                id=10,
+                name="Observation Deck",
+                description="A room with large windows for viewing space.",
+            ),
+            0,
+            2,
+        )
+        game_map.add_room(
+            Room(id=11, name="Gym", description="A room with exercise equipment."), 1, 2
+        )
+        game_map.add_room(
+            Room(
+                id=12,
+                name="Science Lab",
+                description="A room filled with scientific equipment.",
+            ),
+            2,
+            2,
+        )
+        game_map.add_room(
+            Room(
+                id=13,
+                name="Escape Pod Bay",
+                description="A room housing escape pods for emergencies.",
+            ),
+            3,
+            2,
+        )
+        game_map.add_room(
+            Room(id=14, name="Armory", description="A room storing weapons and armor."),
+            4,
+            2,
+        )
+        return game_map
+
 
 class Player:
-    def __init__(self, name=None, hitpoints=10, inventory=None, weapons=None, current_room=None):
+    def __init__(
+        self, name=None, hitpoints=10, inventory=None, weapons=None, current_room=None
+    ):
         if inventory is None:
             inventory = []
         if weapons is None:
@@ -75,6 +215,17 @@ class Player:
 
     def inventory_add(self, item):
         self.inventory.append(item)
+
+
+class Enemy:
+    def __init__(
+        self, id=None, name=None, description=None, hitpoints=1, item_drops=None
+    ):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.hitpoints = hitpoints
+        self.item_drops = item_drops
 
 
 class Item:
@@ -96,11 +247,44 @@ class Consumable(Item):
 
 
 class Room:
-    def __init__(self, id=None, name=None, description=None):
+    def __init__(
+        self,
+        id=None,
+        name=None,
+        description=None,
+        interactables=None,
+        items=None,
+        enemies=None,
+    ):
+        if interactables is None:
+            interactables = []
+        if items is None:
+            items = []
+        if enemies is None:
+            items = []
+
         self.id = id
         self.name = name
         self.description = description
-        
+        self.interactables = interactables
+        self.items = items
+        self.enemies = enemies
+
+
+class Interactable:
+    def __init__(self, id=None, name=None, description=None, items=None, enemies=None):
+        if items is None:
+            items = []
+        if enemies is None:
+            enemies = []
+
+        self.id = id
+        self.name = name
+        self.description = description
+        self.items = items
+        self.enemies = enemies
+
+
 class Map:
     def __init__(self, width, height):
         self.rooms = [[None for _ in range(width)] for _ in range(height)]
