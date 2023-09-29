@@ -7,12 +7,11 @@ class GamesaveState:
     def loadstate(cls, save_dict):
         gameobjects = {
             "Player": Player(**save_dict["Player"]),
-            "Map": Map(**save_dict["Map"])
+            "Map": Map(**save_dict["Map"]),
         }
 
         # for row in save_dict["Map"]["rooms"]:
         #     for room in row ???????????????????????
-
 
         return gameobjects
 
@@ -41,7 +40,7 @@ class GameobjectData:
             "Weapon": GameobjectData.get_weapon_list(),
             "Consumable": GameobjectData.get_consumable_list(),
             "Interactable": GameobjectData.get_interactable_list(),
-            "Map": GameobjectData.get_map()
+            "Map": GameobjectData.get_map(),
         }
 
         return gameobjects
@@ -270,7 +269,6 @@ class Room:
         self.interactables = interactables
         self.items = items
         self.enemies = enemies
-
 
 
 class Interactable:
