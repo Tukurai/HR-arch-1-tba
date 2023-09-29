@@ -7,127 +7,20 @@ from classes import GameobjectData, GamesaveState, Map, Room
 
 def main():
     object_dict = start_game()
+    gameobjects = GameobjectData.init_gameobject_data()
 
     if object_dict is not None:
-        gameobjects = GamesaveState.loadstate(object_dict)
+        for key, value in GamesaveState.loadstate(object_dict):
+            gameobjects[key] = value
     else:
-        gameobjects = GameobjectData.init_gameobject_data()
-
-    # Create a new map and add rooms
-    game_map = Map(5, 5)
-    game_map.add_room(
-        Room(id=0, name="Bridge", description="The control center of the spaceship."),
-        0,
-        0,
-    )
-    game_map.add_room(
-        Room(
-            id=1, name="Engine Room", description="A room filled with loud machinery."
-        ),
-        1,
-        0,
-    )
-    game_map.add_room(
-        Room(id=2, name="Cargo Hold", description="A large room for storing cargo."),
-        2,
-        0,
-    )
-    game_map.add_room(
-        Room(id=3, name="Crew Quarters", description="Where the crew sleeps."), 3, 0
-    )
-
-    interactable = GameobjectHelper.get_gameobject_by_name(
-        gameobjects["Interactable"], "Desk"
-    )
-    game_map.add_room(
-        Room(
-            id=4,
-            name="Medical Bay",
-            description="A clean room with medical equipment.",
-            interactables=[interactable],
-        ),
-        4,
-        0,
-    )
-    game_map.add_room(
-        Room(id=5, name="Kitchen", description="A room with cooking equipment."), 0, 1
-    )
-    game_map.add_room(
-        Room(
-            id=6,
-            name="Dining Room",
-            description="A room with tables and chairs for eating.",
-        ),
-        1,
-        1,
-    )
-    game_map.add_room(
-        Room(
-            id=7, name="Bathroom", description="A small room with a shower and toilet."
-        ),
-        2,
-        1,
-    )
-    game_map.add_room(
-        Room(
-            id=8,
-            name="Storage Room",
-            description="A room filled with various supplies.",
-        ),
-        3,
-        1,
-    )
-    game_map.add_room(
-        Room(
-            id=9,
-            name="Airlock",
-            description="A room used for exiting and entering the spaceship.",
-        ),
-        4,
-        1,
-    )
-    game_map.add_room(
-        Room(
-            id=10,
-            name="Observation Deck",
-            description="A room with large windows for viewing space.",
-        ),
-        0,
-        2,
-    )
-    game_map.add_room(
-        Room(id=11, name="Gym", description="A room with exercise equipment."), 1, 2
-    )
-    game_map.add_room(
-        Room(
-            id=12,
-            name="Science Lab",
-            description="A room filled with scientific equipment.",
-        ),
-        2,
-        2,
-    )
-    game_map.add_room(
-        Room(
-            id=13,
-            name="Escape Pod Bay",
-            description="A room housing escape pods for emergencies.",
-        ),
-        3,
-        2,
-    )
-    game_map.add_room(
-        Room(id=14, name="Armory", description="A room storing weapons and armor."),
-        4,
-        2,
-    )
-
-    # Set the player's current room
-    for row in game_map.rooms:
-        for room in row:
-            if room is not None and room.id == 0:  # Assuming id=0 is the starting room
-                gameobjects["Player"].current_room = room
-                break
+        # Set the player's current room to starting room
+        for row in gameobjects["Map"].rooms:
+            for room in row:
+                if (
+                    room is not None and room.id == 0
+                ):  # Assuming id=0 is the starting room
+                    gameobjects["Player"].current_room = room
+                    break
 
     while True:
         print(
@@ -143,17 +36,17 @@ def main():
             MapHelper.get_room_to_west_of,
             MapHelper.get_room_to_east_of,
         ]
-        available_actions = ["look around", "check", "save", "load", "help"]
+        available_actions = ["look around", "search", "save", "load", "help"]
         direction_prompts = []
 
         for direction, method in zip(possible_directions, room_methods):
-            new_room = method(gameobjects["Player"].current_room, game_map.rooms)
+            new_room = method(gameobjects["Player"].current_room, gameobjects["Map"].rooms)
             if new_room is not None:
                 available_actions.insert(0, f"go {direction}")
                 direction_prompts.append(f"go {direction}")
 
         direction_prompts_string = ", ".join(direction_prompts)
-        action_prompt = f"What would you like to do? ({direction_prompts_string}, look around, check, save, load, help): "
+        action_prompt = f"What would you like to do? ({direction_prompts_string}, look around, search, save, load, help): "
 
         action = InputHandler.user_input(
             action_prompt,
@@ -163,7 +56,7 @@ def main():
         match action:
             case "go north":
                 new_room = MapHelper.get_room_to_north_of(
-                    gameobjects["Player"].current_room, game_map.rooms
+                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
                 )
                 if new_room is not None:
                     gameobjects["Player"].current_room = new_room
@@ -171,7 +64,7 @@ def main():
                     print("You cannot go north from here.")
             case "go south":
                 new_room = MapHelper.get_room_to_south_of(
-                    gameobjects["Player"].current_room, game_map.rooms
+                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
                 )
                 if new_room is not None:
                     gameobjects["Player"].current_room = new_room
@@ -179,7 +72,7 @@ def main():
                     print("You cannot go south from here.")
             case "go west":
                 new_room = MapHelper.get_room_to_west_of(
-                    gameobjects["Player"].current_room, game_map.rooms
+                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
                 )
                 if new_room is not None:
                     gameobjects["Player"].current_room = new_room
@@ -187,28 +80,34 @@ def main():
                     print("You cannot go west from here.")
             case "go east":
                 new_room = MapHelper.get_room_to_east_of(
-                    gameobjects["Player"].current_room, game_map.rooms
+                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
                 )
                 if new_room is not None:
                     gameobjects["Player"].current_room = new_room
                 else:
                     print("You cannot go east from here.")
-            case "check" | "look around":
+            case "search":
                 current_room = gameobjects["Player"].current_room
                 interactable_name_list = [
-                    interactable.name
-                    for interactable in current_room.interactables
+                    interactable.name for interactable in current_room.interactables
                 ]
-                if action == "look around":
-                    if len(interactable_name_list) == 0:
-                        interactable_name_list.append("nothing of interest")
-                    print(f"You look around the room and see a {' ,'.join(interactable_name_list)}")
                 if action == "check":
-                    inp =  input("What would you like to check?: ")
+                    inp = input("What would you like to check?: ")
                     if inp in interactable_name_list:
                         ...
                         # List stuff thats checkable here
-                        #GameobjectHelper.get_gameobject_by_name(inp)
+                        # GameobjectHelper.get_gameobject_by_name(inp)
+            case "look around":
+                current_room = gameobjects["Player"].current_room
+                interactable_name_list = [
+                    interactable.name for interactable in current_room.interactables
+                ]
+                if len(interactable_name_list) == 0:
+                    interactable_name_list.append("nothing of interest")
+                print(
+                    f"You look around the room and see a {' ,'.join(interactable_name_list)}"
+                )
+
             case "save":
                 SaveLoadHandler.save_state(gameobjects)
             case "load":
@@ -224,7 +123,7 @@ def main():
                 ]
                 for direction, method in zip(possible_directions, room_methods):
                     new_room = method(
-                        gameobjects["Player"].current_room, game_map.rooms
+                        gameobjects["Player"].current_room, gameobjects["Map"].rooms
                     )
                     if new_room is not None:
                         print(f"- go {direction}: move to the room to the {direction}")
