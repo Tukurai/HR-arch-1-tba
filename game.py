@@ -181,7 +181,7 @@ def main():
                                 (
                                     interactable
                                     for interactable in interactable_list
-                                    if interactable.name == search_action
+                                    if interactable.name.lower() == search_action.lower()
                                 ),
                                 None,
                             )
