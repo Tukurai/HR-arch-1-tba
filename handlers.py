@@ -31,13 +31,13 @@ class InputHandler:
     @staticmethod
     def user_input(message, choices):
         while True:
-            StoryOutputHandler.story_output(message, 25, False)
+            StoryOutputHandler.story_output(message, 15, False)
             user_input = input()
             if user_input in choices:
                 return user_input
             else:
                 StoryOutputHandler.story_output(
-                    f"Invalid input, your choices are: ({', '.join(choices)})", 25
+                    f"Invalid input, your choices are: ({', '.join(choices)})", 15
                 )
 
 

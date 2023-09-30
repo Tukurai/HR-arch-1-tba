@@ -33,12 +33,14 @@ def main():
         current_room = gameobjects["Player"].current_room
 
         possible_directions = ["north", "south", "west", "east"]
+        
         room_methods = [
             MapHelper.get_room_to_north_of,
             MapHelper.get_room_to_south_of,
             MapHelper.get_room_to_west_of,
             MapHelper.get_room_to_east_of,
         ]
+
         available_actions = [
             "investigate",
             "inventory",
@@ -47,19 +49,17 @@ def main():
             "load",
             "help",
         ]
-        direction_prompts = []
 
         for direction, method in zip(possible_directions, room_methods):
             new_room = method(current_room, gameobjects["Map"].rooms)
             if new_room is not None:
                 available_actions.insert(0, f"go {direction}")
-                direction_prompts.append(f"go {direction}")
 
-        action_prompt = f"What would you like to do? ({', '.join(direction_prompts)}, {', '.join(available_actions)}): "
+        action_prompt = f"What would you like to do? ({', '.join(available_actions)}): "
 
         action = InputHandler.user_input(
             action_prompt,
-            available_actions,
+            available_actions
         )
 
         match action:
@@ -105,7 +105,10 @@ def main():
                 enemy_list = current_room.enemies
 
                 while True:
-                    sub_actions = ["look around", "search", "return"]
+                    sub_actions = ["look around", "return"]
+                    if any(interactable_name_list):
+                        sub_actions.append("search")
+
                     sub_prompt = f"({action}) What would you like to do? ({', '.join(sub_actions)}): "
                     sub_action = InputHandler.user_input(sub_prompt, sub_actions)
                     match sub_action:
