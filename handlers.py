@@ -24,9 +24,13 @@ class SaveLoadHandler:
 class InputHandler:  
     @staticmethod  
     def user_input(message, choices):  
-        while True:  
-            user_input = input(message)  
-            if user_input in choices:  
-                return user_input  
-            else:  
-                print("Invalid input. Please try again.")  
+        while True:
+            user_input = input(message)
+            if user_input in choices:
+                return [user_input]
+            else:
+                for choice in choices:
+                    if choice in user_input:
+                        user_input = user_input.split(choice)
+                        return [s.strip() for s in user_input]
+            print("Invalid input. Please try again.")

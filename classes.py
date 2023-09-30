@@ -221,13 +221,19 @@ class Player:
 
 class Enemy:
     def __init__(
-        self, id=None, name=None, description=None, hitpoints=1, item_drops=None
+        self, id=None, name=None, description=None, hitpoints=1, level=None, damage=None, item_drops=None, aggressive=None
     ):
+        if item_drops is None:
+            item_drops = []
+
         self.id = id
         self.name = name
         self.description = description
+        self.level = level
+        self.damage = damage
         self.hitpoints = hitpoints
         self.item_drops = item_drops
+        self.aggresive = aggressive
 
 
 class Item:

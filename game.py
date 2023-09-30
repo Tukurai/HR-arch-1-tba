@@ -1,13 +1,15 @@
 # game.py
 
 import os
+import random
 
 from handlers import SaveLoadHandler, InputHandler
-from helpers import MapHelper, GameobjectHelper
+from helpers import MapHelper, GameobjectHelper, PlayerHelper
 from classes import GameobjectData, GamesaveState, Map, Room
 
 
 def main():
+    random.seed()
     object_dict = start_game()
     gameobjects = GameobjectData.init_gameobject_data()
 
@@ -38,7 +40,7 @@ def main():
             MapHelper.get_room_to_west_of,
             MapHelper.get_room_to_east_of,
         ]
-        available_actions = ["look around", "search", "save", "load", "help"]
+        available_actions = ["investigate", "inventory", "attack", "save", "load", "help"]
         direction_prompts = []
 
         for direction, method in zip(possible_directions, room_methods):
@@ -50,14 +52,15 @@ def main():
                 direction_prompts.append(f"go {direction}")
 
         direction_prompts_string = ", ".join(direction_prompts)
-        action_prompt = f"What would you like to do? ({direction_prompts_string}, look around, search, save, load, help): "
+        action_prompt = f"What would you like to do? ({direction_prompts_string}, investigate, inventory, save, load, help): "
 
         action = InputHandler.user_input(
             action_prompt,
             available_actions,
         )
 
-        match action:
+        print(f"DEBUG action: {action}")
+        match action[0]:
             case "go north":
                 new_room = MapHelper.get_room_to_north_of(
                     gameobjects["Player"].current_room, gameobjects["Map"].rooms
@@ -90,28 +93,66 @@ def main():
                     gameobjects["Player"].current_room = new_room
                 else:
                     print("You cannot go east from here.")
-            case "search":
+            case "investigate":
                 current_room = gameobjects["Player"].current_room
-                interactable_name_list = [
-                    interactable.name for interactable in current_room.interactables
-                ]
-                if action == "check":
-                    inp = input("What would you like to check?: ")
-                    if inp in interactable_name_list:
-                        ...
+                item_list = current_room.items
+                interactable_list = current_room.interactables
+                enemy_list = []
+                if current_room.enemies is not None:
+                    for enemy in current_room.enemies:
+                        if enemy.aggressive is False:
+                            enemy_list.append(enemy)
+                
+
+                while True:
+                    investigate_prompt = f"(investigate) What would you like to do? look around, search, pick up, return: "
+                    available_actions = ["look around", "search", "pick up", "return"]
+                    action = InputHandler.user_input(investigate_prompt, available_actions)
+                    print(action)
+                    match action[0]:
+                        case "look around":
+                            if len(interactable_list) == 0 and len(enemy_list) == 0 and len(item_list) == 0:
+                                print("You look around the room and see nothing of interest")
+                            else:
+                                if len(interactable_list) != 0:
+                                    print(
+                                        f"You look around the room and see a {' ,'.join(interactable_list)}"
+                                    )
+                                if len(enemy_list) != 0:
+                                    print(f"You see some enemies: {' ,'.join([f'{enemy.name} Lvl:{enemy.level}' for enemy in enemy_list])}")
+                                if len(item_list) != 0:
+                                    print(f"There's some stuff on the floor: {' ,'.join(item_list)}")
+                        case "search":
+                            try:
+                                if action[1]:
+                                    for interactable in interactable_list:
+                                        if action[1] == interactable.name:
+                                            print(f"You search the {interactable.name}...")
+                                            if len(interactable.enemies) == 0 and len(interactable.items) == 0:
+                                                print("You find nothing")
+                                            if len(interactable.enemies) != 0:
+                                                enemy = interactable.enemies[random.randrange(0, len(interactable.enemies))]
+                                                print(f"You get attacked by: {enemy}!")
+                                                ...
+                                                # start_attack()???
+                                            if len(interactable.items) != 0:
+                                                print(f"You find {' ,'.join([f'{interactable.items}'])}")
+                                                PlayerHelper.add_items_to_inventory(interactable.items)
+                                        else:
+                                            print(f"There's no {action[1]} in this room")
+                            except IndexError:
+                                print("Invalid input")
+                                pass
+
+                        case "return":
+                            break
+
+                # if action == "check":
+                #     inp = input("What would you like to check?: ")
+                #     if inp in interactable_name_list:
+                #         ...
                         # List stuff thats checkable here
                         # GameobjectHelper.get_gameobject_by_name(inp)
-            case "look around":
-                current_room = gameobjects["Player"].current_room
-                interactable_name_list = [
-                    interactable.name for interactable in current_room.interactables
-                ]
-                if len(interactable_name_list) == 0:
-                    interactable_name_list.append("nothing of interest")
-                print(
-                    f"You look around the room and see a {' ,'.join(interactable_name_list)}"
-                )
-
             case "save":
                 SaveLoadHandler.save_state(gameobjects)
             case "load":
