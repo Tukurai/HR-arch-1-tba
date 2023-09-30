@@ -1,5 +1,6 @@
 # game.py
 
+import os
 import random
 
 from handlers import InputHandler, StoryOutputHandler
@@ -20,6 +21,7 @@ def main():
                 break
 
     while True:
+        os.system('cls')
         StoryOutputHandler.story_output(
             f"You are currently in the {gameobjects['Player'].current_room.name}."
         )
