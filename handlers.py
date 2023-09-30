@@ -1,7 +1,7 @@
 # handlers.py
 
-import json
-import os
+import msvcrt
+import sys
 import time
 
 
@@ -17,6 +17,16 @@ class InputHandler:
                 StoryOutputHandler.story_output(
                     f"Invalid input, your choices are: ({', '.join(choices)})", 15
                 )
+
+    @staticmethod
+    def user_keypress(message, key=None, delay=50, newline=True):
+        StoryOutputHandler.story_output(message, delay, newline)
+        while True:
+            pressed = msvcrt.getch().decode().lower()
+            if key is None or pressed == key.lower():
+                return
+            sys.stdout.write("\b")
+        return
 
 
 class StoryOutputHandler:

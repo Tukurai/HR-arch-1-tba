@@ -1,17 +1,13 @@
 # classes.py
 
 class GameState:
-    @classmethod
-    def init_game_state(cls, player_name):
-        game_state = {
-            "Player": Player(name=player_name),
-            "Map": GameState.get_map(),
-        }
+    def __init__(
+        self, player_name=None
+    ):
+        self.player = Player(name=player_name)
+        self.map = self.get_map()
 
-        return game_state
-
-    @classmethod
-    def get_map(cls):
+    def get_map(self):
         game_map = Map(5, 5)
 
         # Bridge 0, 0
@@ -176,8 +172,8 @@ class Player:
         self.weapons = weapons
         self.current_room = current_room
 
-    def inventory_add(self, item):
-        self.inventory.append(item)
+    def inventory_add(self, items):
+        self.inventory += items
 
 
 class Enemy:
@@ -235,6 +231,7 @@ class Room:
         puzzles=[],
         items=[],
         enemies=[],
+        was_looked_around=False
     ):
         self.id = id
         self.name = name
@@ -244,6 +241,7 @@ class Room:
         self.puzzles = puzzles
         self.items = items
         self.enemies = enemies
+        self.was_looked_around = was_looked_around
 
 
 class Interactable:
