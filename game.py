@@ -73,7 +73,7 @@ def main():
 
         if current_room.was_looked_around:
             if any(enemy_list):
-                available_action.append("attack")
+                available_actions.append("attack")
 
         action_prompt = f"What would you like to do? ({', '.join(available_actions)}): "
 
