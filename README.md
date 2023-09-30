@@ -2,9 +2,13 @@
 A text based adventure in Python, for our Basecamp Arch 1 Challenge.
 
 ---
+Prerequisite Basic version:
 
-Prerequisite:
+- None, runs without any modules.
 
+---
+
+Prerequisite PoC Multiplayer:
 
 - Install MongoDB locally, with default settings: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-7.0.1-signed.msi
 - Create a database called `text-based-adventure`, with a collection called `players`.
