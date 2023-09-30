@@ -41,6 +41,19 @@ class MapHelper:
         return None
 
 
+class PlayerHelper:
+    @staticmethod
+    def add_items_to_inventory(player, item_list):
+        for item in item_list:
+            player.inventory.append(item)
+        
+    
+    @staticmethod
+    def remove_items_from_inventory(player, item_list):
+        for item in item_list:
+            player.inventory.remove(item)
+
+
 class GameobjectHelper:
     @staticmethod
     def get_gameobject_by_id(list, id):
