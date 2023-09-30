@@ -75,7 +75,6 @@ class GameState:
                 is_locked=False,
                 interactables=[self.interactables.get(key) for key in [0]],
                 puzzles=[self.puzzles.get(key) for key in [0]],
-                items=[self.items.get(key) for key in [11]]
             ),
             0,
             0,
