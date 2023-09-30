@@ -7,24 +7,24 @@ class GameState:
         self.player = Player(name=player_name)
         self.map = self.get_map()
 
+        self.items = {
+            0: Consumable(id=0, name="Bottle of water", description="A wet looking drink", restore_amount=1),
+            1: Item(id=1, name="Cargo hold key", description="It has a tag that says Cargo hold"),
+        }
+
+        self.puzzles = {}
+        
+        self.interactables = {}
+
     def get_map(self):
         game_map = Map(5, 5)
 
         # Bridge 0, 0
         room_items = [
-            Consumable(
-                id=0,
-                name="Bottle of water",
-                description="A wet looking drink",
-                restore_amount=1
-            )
+            self.items[0]
         ]
         puzzle_items = [
-            Item(
-                id=1, 
-                name="Cargo hold key", 
-                description="It has a tag that says Cargo hold"
-            )
+            self.items[1]
         ]
         puzzles = [
             Puzzle(
