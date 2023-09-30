@@ -12,6 +12,9 @@ def main():
     player_name = InputHandler.user_input(f"Your ship has crashed on a planet, you lost your memories. What is your name again?: ")
     game_state = GameState.init_game_state(player_name)
     StoryOutputHandler.story_output(f"You pick yourself up from the ground. . . \n", 100)
+    StoryOutputHandler.story_output(f"There's a warning on your visor: WARNING DANGEROUS ATMOSPHERE DETECTED!", 75)
+    StoryOutputHandler.story_output(f"You quickly take shelter in a nearby abandoned freighter. You decide to search for parts to fix your spaceship", 50)
+    StoryOutputHandler.story_output(f". . . . ", 100)
 
     # Set the player's current room to starting room
     for row in game_state["Map"].rooms:

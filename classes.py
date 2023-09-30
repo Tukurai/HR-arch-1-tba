@@ -5,85 +5,60 @@ class GameState:
     def init_game_state(cls, player_name):
         game_state = {
             "Player": Player(name=player_name),
-            "Enemy": GameState.get_enemy_list(),
-            "Item": GameState.get_item_list(),
-            "Weapon": GameState.get_weapon_list(),
-            "Consumable": GameState.get_consumable_list(),
-            "Interactable": GameState.get_interactable_list(),
-            "Puzzle": GameState.get_puzzle_list(),
             "Map": GameState.get_map(),
         }
 
         return game_state
 
     @classmethod
-    def get_item_list(cls):
-        item_list = [
-            Item(id=0, name="Bridge desk key", description="A futuristic but old looking key"),
-            Item(id=1, name="Armory code note", description="There's a code scribbled on the note: 5598")
-            ]
-        return item_list
-
-    @classmethod
-    def get_consumable_list(cls):
-        consumable_list = [
-            Consumable(id=0, name="Piece of bread", description="It looks a little dry +1hp", restore_amount=1),
-            Consumable(id=1, name="Bottle of water", description="Fresh bottled water +1hp", restore_amount=1),
-            Consumable(id=2, name="Bandage", description="To wrap around wounds +3hp", restore_amount=3),
-            Consumable(id=3, name="Health pack", description="A proper health pack +10hp", restore_amount=10)
-        ]
-        return consumable_list
-
-    @classmethod
-    def get_weapon_list(cls):
-        weapon_list = [
-            Weapon(id=0, name="Spaceknife", description="A futuristic looking knife", damage_multiplier=1),
-            Weapon(id=1, name="Mining laser", description="A laser meant for mining, but it looks like it could do some damage to other things", damage_multiplier=1.2),
-            Weapon(id=2, name="Lightsaber", description="Somehow, it looks familiar", damage_multiplier=1.5)
-            ]
-        return weapon_list
-
-    @classmethod
-    def get_enemy_list(cls):
-        enemy_list = [
-            Enemy(
-                id=0,
-                name="Spacerat",
-                description="It's a rat, but in space!",
-                hitpoints=2,
-                level=1,
-                damage=1,
-                item_drops=None,
-                aggressive=False
-            ),
-            Enemy(
-                id=1,
-                name="Spaceworm",
-                description="Eek!!!",
-                hitpoints=2,
-                level=1,
-                damage=1,
-                item_drops=None,
-                aggressive=True
-            )
-        ]
-        return enemy_list
-
-    @classmethod
-    def get_interactable_list(cls):
-        interactable_list = [Interactable(id=0, name="desk", description="For working")]
-        return interactable_list
-
-    @classmethod
     def get_map(cls):
         game_map = Map(5, 5)
-        game_map.add_room(
-            Room(
-                id=0, name="Bridge", description="The control center of the spaceship."
-            ),
-            0,
-            0,
-        )
+
+        # Bridge 0, 0
+        room_items = [
+            Consumable(
+                id=0,
+                name="Bottle of water",
+                description="A wet looking drink",
+                restore_amount=1
+            )
+        ]
+        puzzle_items = [
+            Item(
+                id=1, 
+                name="Cargo hold key", 
+                description="It has a tag that says Cargo hold"
+            )
+        ]
+        puzzles = [
+            Puzzle(
+                id=0,
+                name="Bridge front desk lock",
+                unlock_item=puzzle_items
+            )
+        ]
+        interactables = [
+            Interactable(
+                id=0,
+                name="Bridge front desk",
+                description="A large desk",
+                is_locked=True,
+            )
+        ]
+        room = Room(
+                id=0, 
+                name="Bridge", 
+                description="The control center of the spaceship.",
+                is_locked=False,
+                interactables=interactables,
+                puzzles=puzzles,
+                items=room_items
+            )
+        game_map.add_room(room, 0, 0)
+
+
+        # ETC ETC
+
         game_map.add_room(
             Room(
                 id=1,
@@ -189,14 +164,6 @@ class GameState:
             2,
         )
         return game_map
-
-    @classmethod
-    def get_puzzle_list(cls):
-        puzzle_list = [
-            Puzzle(id=0, name="Armory keypad", question="Please enter the 4-number access key", solution="5598", unlock_item=None),
-            Puzzle(id=1, name="Bridge desk lock", question="This could fit a key", solution=None, unlock_item=...)
-        ]
-        return puzzle_list
 
 
 class Player:
