@@ -1,36 +1,49 @@
 # handlers.py
 
-import json  
-import os  
-  
-class SaveLoadHandler:  
-    @staticmethod  
-    def load_state(file_name):  
-        with open(file_name, "r") as json_file:  
-            return json.load(json_file)  
-  
-    @staticmethod  
-    def save_state(gameobjects):  
-        file_name = f"{gameobjects['Player'].name}-save.json"  
-  
-        if not os.getcwd().endswith("saves"):  
-            os.chdir("saves")  
-  
-        with open(file_name, "w") as file:  
-            print("Saving game...")  
-            json.dump(gameobjects, file, default=lambda o: o.__dict__)  
-            print("Game saved successfully")  
+import json
+import os
+import time
 
-class InputHandler:  
-    @staticmethod  
-    def user_input(message, choices):  
+
+class SaveLoadHandler:
+    @staticmethod
+    def load_state(file_name):
+        if not os.getcwd().endswith("saves"):
+            os.chdir("saves")
+
+        with open(f"{file_name}.json", "r") as json_file:
+            return json.load(json_file)
+
+    @staticmethod
+    def save_state(gameobjects):
+        file_name = f"{gameobjects['Player'].name.lower()}.json"
+
+        if not os.getcwd().endswith("saves"):
+            os.chdir("saves")
+
+        with open(file_name, "w") as file:
+            print("Saving game...")
+            json.dump(gameobjects, file, default=lambda o: o.__dict__)
+            print("Game saved successfully")
+
+
+class InputHandler:
+    @staticmethod
+    def user_input(message, choices):
         while True:
-            user_input = input(message)
+            StoryOutputHandler.story_output(message, 25, False)
+            user_input = input()
             if user_input in choices:
-                return [user_input]
+                return user_input
             else:
-                for choice in choices:
-                    if choice in user_input:
-                        user_input = user_input.split(choice)
-                        return [s.strip() for s in user_input]
-            print("Invalid input. Please try again.")
+                StoryOutputHandler.story_output(f"Invalid input, your choices are: ({', '.join(choices)})", 25)
+
+
+class StoryOutputHandler:
+    @staticmethod
+    def story_output(message, delay=50, newline=True):
+        for letter in message:
+            print(letter, end="", flush=True)
+            time.sleep(delay / 1000)
+        if(newline):
+            print()
