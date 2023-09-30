@@ -36,7 +36,9 @@ class InputHandler:
             if user_input in choices:
                 return user_input
             else:
-                StoryOutputHandler.story_output(f"Invalid input, your choices are: ({', '.join(choices)})", 25)
+                StoryOutputHandler.story_output(
+                    f"Invalid input, your choices are: ({', '.join(choices)})", 25
+                )
 
 
 class StoryOutputHandler:
@@ -45,5 +47,5 @@ class StoryOutputHandler:
         for letter in message:
             print(letter, end="", flush=True)
             time.sleep(delay / 1000)
-        if(newline):
+        if newline:
             print()
