@@ -5,28 +5,6 @@ import os
 import time
 
 
-class SaveLoadHandler:
-    @staticmethod
-    def load_state(file_name):
-        if not os.getcwd().endswith("saves"):
-            os.chdir("saves")
-
-        with open(f"{file_name}.json", "r") as json_file:
-            return json.load(json_file)
-
-    @staticmethod
-    def save_state(gameobjects):
-        file_name = f"{gameobjects['Player'].name.lower()}.json"
-
-        if not os.getcwd().endswith("saves"):
-            os.chdir("saves")
-
-        with open(file_name, "w") as file:
-            print("Saving game...")
-            json.dump(gameobjects, file, default=lambda o: o.__dict__)
-            print("Game saved successfully")
-
-
 class InputHandler:
     @staticmethod
     def user_input(message, choices):

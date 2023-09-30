@@ -1,35 +1,5 @@
 # classes.py
 
-import json
-import os
-
-
-class GamesaveState:
-    @classmethod
-    def loadstate(cls, save_dict):
-        gameobjects = {
-            "Player": Player(**save_dict["Player"]),
-            "Map": Map(**save_dict["Map"]),
-        }
-
-        # for row in save_dict["Map"]["rooms"]:
-        #     for room in row ???????????????????????
-
-        return gameobjects
-
-    @classmethod
-    def savestate(cls, gameobjects):
-        file_name = f"{gameobjects['Player'].name}-save.json"
-
-        if not os.getcwd().endswith("saves"):
-            os.chdir("saves")
-
-        with open(file_name, "w") as file:
-            print("Saving game...")
-            json.dump(gameobjects, file, default=lambda o: o.__dict__)
-            print("Game saved successfully")
-
-
 class GameobjectData:
     @classmethod
     def init_gameobject_data(cls):
@@ -42,6 +12,7 @@ class GameobjectData:
             "Weapon": GameobjectData.get_weapon_list(),
             "Consumable": GameobjectData.get_consumable_list(),
             "Interactable": GameobjectData.get_interactable_list(),
+            "Puzzle": GameobjectData.get_puzzle_list(),
             "Map": GameobjectData.get_map(),
         }
 
@@ -49,20 +20,29 @@ class GameobjectData:
 
     @classmethod
     def get_item_list(cls):
-        item_list = [Item(id=0, name="Spaceship key")]
+        item_list = [
+            Item(id=0, name="Bridge desk key", description="A futuristic but old looking key"),
+            Item(id=1, name="Armory code note", description="There's a code scribbled on the note: 5598")
+            ]
         return item_list
 
     @classmethod
     def get_consumable_list(cls):
         consumable_list = [
-            Consumable(id=0, name="Piece of bread", restore_amount=1),
-            Consumable(id=1, name="Bottle of water", restore_amount=1),
+            Consumable(id=0, name="Piece of bread", description="It looks a little dry +1hp", restore_amount=1),
+            Consumable(id=1, name="Bottle of water", description="Fresh bottled water +1hp", restore_amount=1),
+            Consumable(id=2, name="Bandage", description="To wrap around wounds +3hp", restore_amount=3),
+            Consumable(id=3, name="Health pack", description="A proper health pack +10hp", restore_amount=10)
         ]
         return consumable_list
 
     @classmethod
     def get_weapon_list(cls):
-        weapon_list = [Weapon(id=0, name="Spaceknife", damage_multiplier=1)]
+        weapon_list = [
+            Weapon(id=0, name="Spaceknife", description="A futuristic looking knife", damage_multiplier=1),
+            Weapon(id=1, name="Mining laser", description="A laser meant for mining, but it looks like it could do some damage to other things", damage_multiplier=1.2),
+            Weapon(id=2, name="Lightsaber", description="Somehow, it looks familiar", damage_multiplier=1.5)
+            ]
         return weapon_list
 
     @classmethod
@@ -72,8 +52,21 @@ class GameobjectData:
                 id=0,
                 name="Spacerat",
                 description="It's a rat, but in space!",
-                hitpoints=1,
+                hitpoints=2,
+                level=1,
+                damage=1,
                 item_drops=None,
+                aggressive=False
+            ),
+            Enemy(
+                id=1,
+                name="Spaceworm",
+                description="Eek!!!",
+                hitpoints=2,
+                level=1,
+                damage=1,
+                item_drops=None,
+                aggressive=True
             )
         ]
         return enemy_list
@@ -199,6 +192,14 @@ class GameobjectData:
         )
         return game_map
 
+    @classmethod
+    def get_puzzle_list(cls):
+        puzzle_list = [
+            Puzzle(id=0, name="Armory keypad", question="Please enter the 4-number access key", solution="5598", unlock_item=None),
+            Puzzle(id=1, name="Bridge desk lock", question="This could fit a key", solution=None, unlock_item=...)
+        ]
+        return puzzle_list
+
 
 class Player:
     def __init__(
@@ -240,20 +241,21 @@ class Enemy:
 
 
 class Item:
-    def __init__(self, id=None, name=None):
+    def __init__(self, id=None, name=None, description=None):
         self.id = id
         self.name = name
+        self.description = description
 
 
 class Weapon(Item):
-    def __init__(self, id=None, name=None, damage_multiplier=1):
-        super().__init__(id, name)
+    def __init__(self, id=None, name=None, description=None, damage_multiplier=1):
+        super().__init__(id, name, description)
         self.damage_multiplier = damage_multiplier
 
 
 class Consumable(Item):
-    def __init__(self, id=None, name=None, restore_amount=1):
-        super().__init__(id, name)
+    def __init__(self, id=None, name=None, description=None, restore_amount=1):
+        super().__init__(id, name, description)
         self.restore_amount = restore_amount
 
 
@@ -263,25 +265,40 @@ class Room:
         id=None,
         name=None,
         description=None,
+        is_locked=None,
         interactables=[],
+        puzzles=[],
         items=[],
         enemies=[],
     ):
         self.id = id
         self.name = name
         self.description = description
+        self.is_locked = is_locked
         self.interactables = interactables
+        self.puzzles = puzzles
         self.items = items
         self.enemies = enemies
 
 
 class Interactable:
-    def __init__(self, id=None, name=None, description=None, items=[], enemies=[]):
+    def __init__(self, id=None, name=None, description=None, is_locked=None, items=[], enemies=[], puzzles=[]):
         self.id = id
         self.name = name
         self.description = description
+        self.is_locked = is_locked
         self.items = items
         self.enemies = enemies
+        self.puzzles = puzzles
+
+
+class Puzzle:
+    def __init__(self, id=None, name=None, question=None, solution=None, unlock_item=None):
+        self.id = id
+        self.name = name
+        self.question = question
+        self.solution = solution
+        self.unlock_item = unlock_item
 
 
 class Map:

@@ -1,29 +1,23 @@
 # game.py
 
-import os
 import random
 
-from handlers import SaveLoadHandler, InputHandler, StoryOutputHandler
-from helpers import MapHelper, GameobjectHelper, PlayerHelper
-from classes import GameobjectData, GamesaveState, Map, Room
+from handlers import InputHandler, StoryOutputHandler
+from helpers import MapHelper, PlayerHelper
+from classes import GameobjectData
 
 
 def main():
-    object_dict = start_game()
     gameobjects = GameobjectData.init_gameobject_data()
 
-    if object_dict is not None:
-        for key, value in GamesaveState.loadstate(object_dict):
-            gameobjects[key] = value
-    else:
-        # Set the player's current room to starting room
-        for row in gameobjects["Map"].rooms:
-            for room in row:
-                if (
-                    room is not None and room.id == 0
-                ):  # Assuming id=0 is the starting room
-                    gameobjects["Player"].current_room = room
-                    break
+    # Set the player's current room to starting room
+    for row in gameobjects["Map"].rooms:
+        for room in row:
+            if (
+                room is not None and room.id == 0
+            ):  # Assuming id=0 is the starting room
+                gameobjects["Player"].current_room = room
+                break
 
     while True:
         StoryOutputHandler.story_output(
@@ -45,8 +39,6 @@ def main():
             "investigate",
             "inventory",
             "attack",
-            "save",
-            "load",
             "help",
         ]
 
@@ -190,10 +182,6 @@ def main():
                     f"Your inventory contains:\n{', '.join(gameobjects['Player'].inventory)}"
                 )
             # case "attack":
-            case "save":
-                SaveLoadHandler.save_state(gameobjects)
-            case "load":
-                gameobjects = GamesaveState.load_state(object_dict)
             case "help":
                 print("Here is a list of possible actions:")
                 possible_directions = ["north", "south", "west", "east"]
@@ -209,37 +197,7 @@ def main():
                     )
                     if new_room is not None:
                         print(f"- go {direction}: move to the room to the {direction}")
-                print("- save: save to this save file")
-                print("- load: load the most recent version of this save file")
                 print("- help: display this help message")
-
-
-def start_game():
-    if not os.path.exists("saves"):
-        os.makedirs("saves")
-
-    savefile_list = []
-    for root, dirs, files in os.walk("saves"):
-        for file in files:
-            if file.endswith(".json"):
-                file_name = file.replace(".json", "")
-                savefile_list.append(file_name.lower())
-
-    if (
-        len(savefile_list) == 0
-        or InputHandler.user_input(
-            "Would you like to load a previous game or start a new one? (load/new): ",
-            ["load", "new"],
-        )
-        == "new"
-    ):
-        return None
-
-    user_load = InputHandler.user_input(
-        f"Which save file would you like to load? ({', '.join(savefile_list)}): ",
-        savefile_list,
-    )
-    return SaveLoadHandler.load_state(user_load)
 
 
 if __name__ == "__main__":
