@@ -7,73 +7,86 @@ class GameState:
         self.player = Player(name=player_name)
         self.map = self.get_map()
 
+        self.enemies = {
+            0: Enemy(id=0, name="Spacerat", description="A rat!... in space!", hitpoints=2, level=1, damage=1, aggressive=False),
+            1: Enemy(id=1, name="Worm creature", description="Looks absolutely disgusting", hitpoints=3, level=1, damage=1, aggressive=True),
+            2: Enemy(id=2, name="Energy parasite", description="A biomechanical creature that feeds on the facility's power systems", hitpoints=4, level=2, damage=1, aggressive=True),
+            3: Enemy(id=3, name="Nightmare shadow", description="Mysterious shadowy entity that haunts dreams, causing sleep deprivation and hallucinations.", hitpoints=4, level=3, damage=2, aggressive=True)
+        }
+
         self.items = {
             0: Consumable(id=0, name="Bottle of water", description="A wet looking drink", restore_amount=1),
             1: Item(id=1, name="Cargo hold key", description="It has a tag that says Cargo hold"),
+            2: Weapon(id=2, name="Wrench", description="Used to turn bolts, or hit stuff i guess...", damage_multiplier=2),
+            3: Item(id=3, name="Engine part", description="A part for a spaceship engine. It looks usable")
         }
 
-        self.puzzles = {}
+        self.key_items = {
+            0: Item(id=0, name="Front desk key", description="A key that happens to look like it could fit a desk lock"),
+            1: Item(id=1, name="Cargo hold key", description="An old but futuristic key")
+        }
+
+        self.puzzles = {
+            0: Puzzle(id=0, name="Bridge front desk lock", unlock_item=self.key_items[0]),
+            1: Puzzle(id=1, name="Cargo hold door lock", unlock_item=self.key_items[1]),
+        }
         
-        self.interactables = {}
+        self.interactables = {
+            0: Interactable(id=0, name="Bridge front desk", description="A large desk", is_locked=True, items=[self.items[1]], puzzles=[self.puzzles[0]])
+        }
 
     def get_map(self):
         game_map = Map(5, 5)
 
         # Bridge 0, 0
-        room_items = [
-            self.items[0]
-        ]
-        puzzle_items = [
-            self.items[1]
-        ]
-        puzzles = [
-            Puzzle(
-                id=0,
-                name="Bridge front desk lock",
-                unlock_item=puzzle_items
-            )
-        ]
-        interactables = [
-            Interactable(
-                id=0,
-                name="Bridge front desk",
-                description="A large desk",
-                is_locked=True,
-            )
-        ]
-        room = Room(
+        game_map.add_room(
+            Room(
                 id=0, 
                 name="Bridge", 
                 description="The control center of the spaceship.",
                 is_locked=False,
-                interactables=interactables,
-                puzzles=puzzles,
-                items=room_items
-            )
-        game_map.add_room(room, 0, 0)
+                interactables=[self.interactables.get(key) for key in [0]],
+                puzzles=[self.puzzles.get(key) for key in [0]],
+                items=[self.items.get(key) for key in [0]]
+            ),
+            0,
+            0,
+        )
 
-
-        # ETC ETC
-
+        # Engine room 1, 0
         game_map.add_room(
             Room(
                 id=1,
                 name="Engine Room",
                 description="A room filled with loud machinery.",
+                is_locked=False,
+                items=[self.items.get(key) for key in [2, 3]],
+                enemies=[self.enemies.get(key) for key in [2]]
             ),
             1,
             0,
         )
+
+        # Cargo hold 2, 0
         game_map.add_room(
             Room(
-                id=2, name="Cargo Hold", description="A large room for storing cargo."
+                id=2, 
+                name="Cargo Hold", 
+                description="A large room for storing cargo.",
+                is_locked=True,
+                items=[self.items.get(key) for key in [3]],
+                puzzles=[self.puzzles.get(key) for key in [1]],
             ),
             2,
             0,
         )
+
+        # Crew quarters 3, 0
         game_map.add_room(
             Room(id=3, name="Crew Quarters", description="Where the crew sleeps."), 3, 0
         )
+
+        # Medical bay 4, 0
         game_map.add_room(
             Room(
                 id=4,
@@ -83,11 +96,15 @@ class GameState:
             4,
             0,
         )
+
+        # Kitchen 0, 1
         game_map.add_room(
             Room(id=5, name="Kitchen", description="A room with cooking equipment."),
             0,
             1,
         )
+
+        # 
         game_map.add_room(
             Room(
                 id=6,
@@ -97,6 +114,7 @@ class GameState:
             1,
             1,
         )
+
         game_map.add_room(
             Room(
                 id=7,
@@ -106,6 +124,7 @@ class GameState:
             2,
             1,
         )
+
         game_map.add_room(
             Room(
                 id=8,
@@ -115,6 +134,7 @@ class GameState:
             3,
             1,
         )
+
         game_map.add_room(
             Room(
                 id=9,
@@ -124,15 +144,21 @@ class GameState:
             4,
             1,
         )
+
+        # Observation Desk 0, 2
         game_map.add_room(
             Room(
                 id=10,
                 name="Observation Deck",
                 description="A room with large windows for viewing space.",
+                is_locked=False,
+                items=[self.items.get(key) for key in [0]],
+                enemies=[self.enemies.get(key) for key in [0]]
             ),
             0,
             2,
         )
+
         game_map.add_room(
             Room(id=11, name="Gym", description="A room with exercise equipment."), 1, 2
         )

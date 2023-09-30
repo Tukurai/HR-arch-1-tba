@@ -21,6 +21,7 @@ def main():
     StoryOutputHandler.story_output(
         f"You quickly take shelter in a nearby abandoned freighter. You decide to search for parts to fix your spaceship."
     )
+    StoryOutputHandler.story_output("The bridge door slams behind you. There's no going back now.")
     InputHandler.user_keypress("Press any key to continue...")
 
     # Set the player's current room to starting room
