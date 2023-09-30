@@ -11,7 +11,7 @@ class InputHandler:
         while True:
             StoryOutputHandler.story_output(message, 15, False)
             user_input = input()
-            if choices is None or user_input in choices:
+            if choices is None or user_input.lower() in [choice.lower() for choice in choices]:
                 return user_input
             else:
                 StoryOutputHandler.story_output(

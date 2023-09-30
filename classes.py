@@ -5,7 +5,6 @@ class GameState:
         self, player_name=None
     ):
         self.player = Player(name=player_name)
-        self.map = self.get_map()
 
         self.enemies = {  
             0: Enemy(id=0, name="Spacerat", description="A rat!... in space!", hitpoints=2, level=1, damage=1, aggressive=False),  
@@ -44,13 +43,13 @@ class GameState:
         }
   
         self.puzzles = {  
-            0: Puzzle(id=0, name="Bridge front desk lock", unlock_item=self.key_items[0]),  
-            1: Puzzle(id=1, name="Cargo hold door lock", unlock_item=self.key_items[1]),  
+            0: Puzzle(id=0, name="Bridge front desk lock", unlock_item=self.items[11]),  
+            1: Puzzle(id=1, name="Cargo hold door lock", unlock_item=self.items[12]),  
             2: Puzzle(id=2, name="Armory keypad", question="Enter the passcode", solution="8340"),  
-            3: Puzzle(id=3, name="Galactic coordinates", question="What are the coordinates to the nearest safe planet?", solution="36-24-36", unlock_item=self.key_items[3]),
-            4: Puzzle(id=4, name="Ancient chest lock", unlock_item=self.key_items[4]),
+            3: Puzzle(id=3, name="Galactic coordinates", question="What are the coordinates to the nearest safe planet?", solution="36-24-36", unlock_item=self.items[14]),
+            4: Puzzle(id=4, name="Ancient chest lock", unlock_item=self.items[15]),
             5: Puzzle(id=5, name="Alien encryption", question="Can you decipher the alien language?", solution="42"),
-            6: Puzzle(id=6, name="Storage room lock", unlock_item=self.key_items[6]),
+            6: Puzzle(id=6, name="Storage room lock", unlock_item=self.items[17]),
             7: Puzzle(id=7, name="Science lab keypad", question="Enter the passcode", solution="9493")
         }  
           
@@ -61,6 +60,8 @@ class GameState:
             3: Interactable(id=3, name="Ancient chest", description="An ancient alien chest.", items=[self.items[6]], puzzles=[self.puzzles[4]]),  
             4: Interactable(id=4, name="Space suit locker", description="A locker containing space suits.", items=[self.items[8]])  
         }  
+
+        self.map = self.get_map()
 
     def get_map(self):
         game_map = Map(5, 5)
@@ -221,7 +222,7 @@ class GameState:
                 id=11, 
                 name="Gym", 
                 description="A room with exercise equipment.",
-                is_lock=False,
+                is_locked=False,
                 interactables=[self.interactables.get(key) for key in [1]],
             ), 
             1, 

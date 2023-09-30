@@ -188,6 +188,10 @@ def main():
                             if interactable is not None:
                                 result = []
 
+                                interactable_items_name_list = [
+                                   item.name for item in interactable.items
+                                ]
+
                                 StoryOutputHandler.story_output(
                                     f"You search the {interactable.name}...", 100
                                 )
@@ -203,7 +207,7 @@ def main():
 
                                 if len(interactable.items) != 0:
                                     result.append(
-                                        f"You pick up {' ,'.join([f'{interactable.items}'])}"
+                                        f"You pick up {' ,'.join([f'{interactable_items_name_list}'])}"
                                     )
                                     game_state.player.inventory_add(interactable.items)
                                     interactable.items = []
