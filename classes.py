@@ -202,13 +202,8 @@ class GameobjectData:
 
 class Player:
     def __init__(
-        self, name=None, hitpoints=10, inventory=None, weapons=None, current_room=None
+        self, name=None, hitpoints=10, inventory=[], weapons=[], current_room=None
     ):
-        if inventory is None:
-            inventory = []
-        if weapons is None:
-            weapons = []
-
         self.name = name
         self.hitpoints = hitpoints
         self.inventory = inventory
@@ -221,7 +216,15 @@ class Player:
 
 class Enemy:
     def __init__(
-        self, id=None, name=None, description=None, hitpoints=1, level=None, damage=None, item_drops=None, aggressive=None
+        self,
+        id=None,
+        name=None,
+        description=None,
+        hitpoints=1,
+        level=None,
+        damage=None,
+        item_drops=None,
+        aggressive=None,
     ):
         if item_drops is None:
             item_drops = []
@@ -260,17 +263,10 @@ class Room:
         id=None,
         name=None,
         description=None,
-        interactables=None,
-        items=None,
-        enemies=None,
+        interactables=[],
+        items=[],
+        enemies=[],
     ):
-        if interactables is None:
-            interactables = []
-        if items is None:
-            items = []
-        if enemies is None:
-            items = []
-
         self.id = id
         self.name = name
         self.description = description
@@ -280,12 +276,7 @@ class Room:
 
 
 class Interactable:
-    def __init__(self, id=None, name=None, description=None, items=None, enemies=None):
-        if items is None:
-            items = []
-        if enemies is None:
-            enemies = []
-
+    def __init__(self, id=None, name=None, description=None, items=[], enemies=[]):
         self.id = id
         self.name = name
         self.description = description
