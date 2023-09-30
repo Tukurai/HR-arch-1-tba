@@ -1,22 +1,20 @@
 # classes.py
 
-class GameobjectData:
+class GameState:
     @classmethod
-    def init_gameobject_data(cls):
-        player_name = input("Please enter your name: ")
-
-        gameobjects = {
+    def init_game_state(cls, player_name):
+        game_state = {
             "Player": Player(name=player_name),
-            "Enemy": GameobjectData.get_enemy_list(),
-            "Item": GameobjectData.get_item_list(),
-            "Weapon": GameobjectData.get_weapon_list(),
-            "Consumable": GameobjectData.get_consumable_list(),
-            "Interactable": GameobjectData.get_interactable_list(),
-            "Puzzle": GameobjectData.get_puzzle_list(),
-            "Map": GameobjectData.get_map(),
+            "Enemy": GameState.get_enemy_list(),
+            "Item": GameState.get_item_list(),
+            "Weapon": GameState.get_weapon_list(),
+            "Consumable": GameState.get_consumable_list(),
+            "Interactable": GameState.get_interactable_list(),
+            "Puzzle": GameState.get_puzzle_list(),
+            "Map": GameState.get_map(),
         }
 
-        return gameobjects
+        return game_state
 
     @classmethod
     def get_item_list(cls):

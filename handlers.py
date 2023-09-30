@@ -7,11 +7,11 @@ import time
 
 class InputHandler:
     @staticmethod
-    def user_input(message, choices):
+    def user_input(message, choices=None):
         while True:
             StoryOutputHandler.story_output(message, 15, False)
             user_input = input()
-            if user_input in choices:
+            if choices is None or user_input in choices:
                 return user_input
             else:
                 StoryOutputHandler.story_output(

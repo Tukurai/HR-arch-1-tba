@@ -5,28 +5,30 @@ import random
 
 from handlers import InputHandler, StoryOutputHandler
 from helpers import MapHelper, PlayerHelper
-from classes import GameobjectData
+from classes import GameState
 
 
 def main():
-    gameobjects = GameobjectData.init_gameobject_data()
+    player_name = InputHandler.user_input(f"Your ship has crashed on a planet, you lost your memories. What is your name again?: ")
+    game_state = GameState.init_game_state(player_name)
+    StoryOutputHandler.story_output(f"You pick yourself up from the ground. . . \n", 100)
 
     # Set the player's current room to starting room
-    for row in gameobjects["Map"].rooms:
+    for row in game_state["Map"].rooms:
         for room in row:
             if (
                 room is not None and room.id == 0
             ):  # Assuming id=0 is the starting room
-                gameobjects["Player"].current_room = room
+                game_state["Player"].current_room = room
                 break
 
     while True:
         os.system('cls')
         StoryOutputHandler.story_output(
-            f"You are currently in the {gameobjects['Player'].current_room.name}."
+            f"You are currently in the {game_state['Player'].current_room.name}."
         )
 
-        current_room = gameobjects["Player"].current_room
+        current_room = game_state["Player"].current_room
 
         possible_directions = ["north", "south", "west", "east"]
         
@@ -45,7 +47,7 @@ def main():
         ]
 
         for direction, method in zip(possible_directions, room_methods):
-            new_room = method(current_room, gameobjects["Map"].rooms)
+            new_room = method(current_room, game_state["Map"].rooms)
             if new_room is not None:
                 available_actions.insert(0, f"go {direction}")
 
@@ -59,34 +61,34 @@ def main():
         match action:
             case "go north":
                 new_room = MapHelper.get_room_to_north_of(
-                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
+                    game_state["Player"].current_room, game_state["Map"].rooms
                 )
                 if new_room is not None:
-                    gameobjects["Player"].current_room = new_room
+                    game_state["Player"].current_room = new_room
                 else:
                     StoryOutputHandler.story_output("You cannot go north from here.")
             case "go south":
                 new_room = MapHelper.get_room_to_south_of(
-                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
+                    game_state["Player"].current_room, game_state["Map"].rooms
                 )
                 if new_room is not None:
-                    gameobjects["Player"].current_room = new_room
+                    game_state["Player"].current_room = new_room
                 else:
                     StoryOutputHandler.story_output("You cannot go south from here.")
             case "go west":
                 new_room = MapHelper.get_room_to_west_of(
-                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
+                    game_state["Player"].current_room, game_state["Map"].rooms
                 )
                 if new_room is not None:
-                    gameobjects["Player"].current_room = new_room
+                    game_state["Player"].current_room = new_room
                 else:
                     StoryOutputHandler.story_output("You cannot go west from here.")
             case "go east":
                 new_room = MapHelper.get_room_to_east_of(
-                    gameobjects["Player"].current_room, gameobjects["Map"].rooms
+                    game_state["Player"].current_room, game_state["Map"].rooms
                 )
                 if new_room is not None:
-                    gameobjects["Player"].current_room = new_room
+                    game_state["Player"].current_room = new_room
                 else:
                     StoryOutputHandler.story_output("You cannot go east from here.")
 
@@ -181,7 +183,7 @@ def main():
 
             case "inventory":
                 StoryOutputHandler.story_output(
-                    f"Your inventory contains:\n{', '.join(gameobjects['Player'].inventory)}"
+                    f"Your inventory contains:\n{', '.join(game_state['Player'].inventory)}"
                 )
             # case "attack":
             case "help":
@@ -195,7 +197,7 @@ def main():
                 ]
                 for direction, method in zip(possible_directions, room_methods):
                     new_room = method(
-                        gameobjects["Player"].current_room, gameobjects["Map"].rooms
+                        game_state["Player"].current_room, game_state["Map"].rooms
                     )
                     if new_room is not None:
                         print(f"- go {direction}: move to the room to the {direction}")
