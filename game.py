@@ -11,10 +11,10 @@ from classes import GameState
 def main():
     player_name = InputHandler.user_input(f"Your ship has crashed on a planet, you lost your memories. What is your name again?: ")
     game_state = GameState.init_game_state(player_name)
-    StoryOutputHandler.story_output(f"You pick yourself up from the ground. . . \n", 100)
-    StoryOutputHandler.story_output(f"There's a warning on your visor: WARNING DANGEROUS ATMOSPHERE DETECTED!", 75)
-    StoryOutputHandler.story_output(f"You quickly take shelter in a nearby abandoned freighter. You decide to search for parts to fix your spaceship", 50)
-    StoryOutputHandler.story_output(f". . . . ", 100)
+    StoryOutputHandler.story_output(f"You pick yourself up from the ground. . .", 100)
+    StoryOutputHandler.story_output(f"There's a warning on your visor: WARNING DANGEROUS ATMOSPHERE DETECTED!", 50)
+    StoryOutputHandler.story_output(f"You quickly take shelter in a nearby abandoned freighter. You decide to search for parts to fix your spaceship\n", 50)
+    InputHandler.user_input("Press enter to continue...")
 
     # Set the player's current room to starting room
     for row in game_state["Map"].rooms:
@@ -97,11 +97,15 @@ def main():
 
             case "investigate":
                 item_list = current_room.items
+                item_name_list = [item.name for item in item_list]
+
                 interactable_list = current_room.interactables
                 interactable_name_list = [
                     interactable.name for interactable in current_room.interactables
                 ]
+
                 enemy_list = current_room.enemies
+                enemy_name_list = [enemy.name for enemy in enemy_list]
 
                 while True:
                     sub_actions = ["look around", "return"]
@@ -116,7 +120,7 @@ def main():
 
                             if len(interactable_list) != 0:
                                 result.append(
-                                    f"You look around the room and see a {' ,'.join(interactable_list)}"
+                                    f"You look around the room and see a {' ,'.join(interactable_name_list)}"
                                 )
 
                             if len(enemy_list) != 0:
@@ -126,7 +130,7 @@ def main():
 
                             if len(item_list) != 0:
                                 result.append(
-                                    f"There's some stuff on the floor: {' ,'.join(item_list)}"
+                                    f"There's some stuff on the floor: {' ,'.join(item_name_list)}"
                                 )
 
                             if len(result) == 0:
@@ -204,7 +208,11 @@ def main():
                     )
                     if new_room is not None:
                         print(f"- go {direction}: move to the room to the {direction}")
+                print("- investigate: enter the investigate sub-menu")
+                print("- inventory: enter the inventory sub-menu")
+                print("- attack: enter the attack sub-menu")
                 print("- help: display this help message")
+                InputHandler.user_input("Press enter to continue...")
 
 
 if __name__ == "__main__":
