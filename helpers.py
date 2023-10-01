@@ -49,15 +49,3 @@ class GameobjectHelper:
             if i.id == id:
                 return i
         return None
-
-
-class PlayerHelper:
-    @staticmethod
-    def add_items_to_inventory(player, item_list):
-        for item in item_list:
-            player.inventory.append(item)
-
-    @staticmethod
-    def remove_items_from_inventory(player, item_list):
-        for item in item_list:
-            player.inventory.remove(item)

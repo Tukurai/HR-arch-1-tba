@@ -1,44 +1,32 @@
 # handlers.py
 
-import json
-import os
+import msvcrt
+import sys
 import time
-
-
-class SaveLoadHandler:
-    @staticmethod
-    def load_state(file_name):
-        if not os.getcwd().endswith("saves"):
-            os.chdir("saves")
-
-        with open(f"{file_name}.json", "r") as json_file:
-            return json.load(json_file)
-
-    @staticmethod
-    def save_state(gameobjects):
-        file_name = f"{gameobjects['Player'].name.lower()}.json"
-
-        if not os.getcwd().endswith("saves"):
-            os.chdir("saves")
-
-        with open(file_name, "w") as file:
-            print("Saving game...")
-            json.dump(gameobjects, file, default=lambda o: o.__dict__)
-            print("Game saved successfully")
 
 
 class InputHandler:
     @staticmethod
-    def user_input(message, choices):
+    def user_input(message, choices=None):
         while True:
             StoryOutputHandler.story_output(message, 15, False)
             user_input = input()
-            if user_input in choices:
+            if choices is None or user_input.lower() in [choice.lower() for choice in choices]:
                 return user_input
             else:
                 StoryOutputHandler.story_output(
                     f"Invalid input, your choices are: ({', '.join(choices)})", 15
                 )
+
+    @staticmethod
+    def user_keypress(message, key=None, delay=50, newline=True):
+        StoryOutputHandler.story_output(message, delay, newline)
+        while True:
+            pressed = msvcrt.getch().decode().lower()
+            if key is None or pressed == key.lower():
+                return
+            sys.stdout.write("\b")
+        return
 
 
 class StoryOutputHandler:
